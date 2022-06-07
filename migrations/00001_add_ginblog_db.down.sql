@@ -1,0 +1,1 @@
+DROP DATABASE IF NOT EXISTS binblog;
