@@ -8,6 +8,9 @@ import (
 	"gorm.io/gorm"
 )
 
+var db *gorm.DB
+var err error
+
 func InitDb() {
 
 	dsn := fmt.Sprintf("host= %s user=%s password=%s dbname=%s port=%s sslmode=%s TimeZone=%s",
@@ -20,7 +23,7 @@ func InitDb() {
 		utils.DbTimeZone,
 	)
 
-	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+	db, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
 
 	if err != nil {
 		fmt.Println("Database connect failed with error: ", err)
