@@ -1,15 +1,18 @@
 package model
 
 import (
+	"encoding/base64"
 	"ginblog/utils/errmsg"
+	"log"
 
+	"golang.org/x/crypto/scrypt"
 	"gorm.io/gorm"
 )
 
 type User struct {
 	gorm.Model
-	Username string `gorm:"type:varchar(20);not null" json:"username"`
-	Password string `gorm:"type:varchar(20);not null" json:"password"`
+	Username string `gorm:"type:varchar(128);not null" json:"username"`
+	Password string `gorm:"type:varchar(128);not null" json:"password"`
 	Role     int    `gorm:"type:int" json:"role"`
 }
 
@@ -25,6 +28,7 @@ func CheckUser(name string) int {
 
 // add new user
 func CreateUser(data *User) int {
+	data.Password = ScryptPassword(data.Password)
 	err := db.Create(data).Error
 	if err != nil {
 		return errmsg.ERROR
@@ -65,3 +69,14 @@ func GetUsers(username string, pageSize int, pageNum int) ([]User, int64) {
 // update user
 
 // delete user
+
+// scrypt
+func ScryptPassword(password string) string {
+	salt := []byte{12, 32, 4, 32, 95, 98, 85, 75}
+	HashPw, err := scrypt.Key([]byte(password), salt, 1<<15, 8, 1, 32)
+	if err != nil {
+		log.Fatal(err)
+	}
+	FinalPw := base64.StdEncoding.EncodeToString(HashPw)
+	return FinalPw
+}
