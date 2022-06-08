@@ -15,7 +15,7 @@ const (
 	// code = 2000... , article mode error
 
 	// code = 3000... , category mode error
-
+	ERROR_CATENAME_USED = 2001
 )
 
 var codeMsg = map[int]string{
@@ -28,6 +28,7 @@ var codeMsg = map[int]string{
 	ERROR_TOKEN_EXPIRED:      "token expired",
 	ERROR_TOKEN_WRONG:        "token wrong",
 	ERROR_TOKEN_WRONG_FORMAT: "token wrong format",
+	ERROR_CATENAME_USED:      "category already exist",
 }
 
 func GetErrMsg(code int) string {
