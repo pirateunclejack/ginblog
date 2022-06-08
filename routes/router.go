@@ -21,6 +21,11 @@ func InitRouter() {
 
 		// category mode router
 
+		routerV1.POST("category/add", v1.AddCate)
+		routerV1.GET("category", v1.GetCate)
+		routerV1.PUT("category/:id", v1.EditCate)
+		routerV1.DELETE("category/:id", v1.DeleteCate)
+
 		// article mode router
 
 	}
