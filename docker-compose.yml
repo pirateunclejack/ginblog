@@ -1,6 +1,23 @@
 version: '3.8'
 services:
-  db:
+  reverse-proxy:
+    # The official v2 Traefik docker image
+    image: traefik:latest
+    # Enables the web UI and tells Traefik to listen to docker
+    command:
+      - "--api.insecure=true"
+      - "--providers.docker"
+      - "--providers.docker.exposedByDefault=false"
+    ports:
+      # The HTTP port
+      - "80:80"
+      # The Web UI (enabled by --api.insecure=true)
+      - "8080:8080"
+    volumes:
+      # So that Traefik can listen to the Docker events
+      - /var/run/docker.sock:/var/run/docker.sock
+
+  postgres:
     image: postgres:alpine
     restart: always
     environment:
@@ -10,7 +27,25 @@ services:
     ports:
       - '5432:5432'
     volumes: 
-      - db:/var/lib/postgresql/data
+      - postgres-db:/var/lib/postgresql/data
+
+  ginblog:
+    build:
+      context: .
+      target: builder
+    image: ginblog
+    expose:
+      - "3000"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.account.rule=Host(`malcorp.test`) && PathPrefix(`/api/v1/`)"
+    volumes:
+      - .:/go/src/app
+    depends_on:
+      - postgres
+    restart: on-failure
+    command: reflex -r '\.go$$' -s -- sh -c 'sleep 3 && go run ./'
+
 volumes:
-  db:
+  postgres-db:
     driver: local
