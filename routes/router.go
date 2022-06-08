@@ -28,6 +28,11 @@ func InitRouter() {
 
 		// article mode router
 
+		routerV1.POST("article/add", v1.AddArt)
+		routerV1.GET("article", v1.GetArt)
+		routerV1.PUT("article/:id", v1.EditArt)
+		routerV1.DELETE("article/:id", v1.DeleteArt)
+
 	}
 
 	r.Run(utils.HttpPort)
