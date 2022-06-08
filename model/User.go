@@ -28,7 +28,7 @@ func CheckUser(name string) int {
 
 // add new user
 func CreateUser(data *User) int {
-	data.Password = ScryptPassword(data.Password)
+	// data.Password = ScryptPassword(data.Password)
 	err := db.Create(data).Error
 	if err != nil {
 		return errmsg.ERROR
@@ -67,11 +67,35 @@ func GetUsers(username string, pageSize int, pageNum int) ([]User, int64) {
 }
 
 // update user
+func EditUser(id int, data *User) int {
+	var maps = make(map[string]interface{})
+	maps["username"] = data.Username
+	maps["role"] = data.Role
+
+	err := db.Model(&User{}).Where("id = ?", id).Updates(maps).Error
+	if err != nil {
+		return errmsg.ERROR
+	}
+	return errmsg.SUCCESS
+}
 
 // delete user
+func DeleteUser(id int) int {
+	var user User
+	err := db.Where("id = ?", id).Delete(&user).Error
+	if err != nil {
+		return errmsg.ERROR
+	}
+	return errmsg.SUCCESS
+}
 
 // scrypt
-func ScryptPassword(password string) string {
+func (u *User) BeforeSave(_ *gorm.DB) (err error) {
+	u.Password = ScryptPw(u.Password)
+	return nil
+}
+
+func ScryptPw(password string) string {
 	salt := []byte{12, 32, 4, 32, 95, 98, 85, 75}
 	HashPw, err := scrypt.Key([]byte(password), salt, 1<<15, 8, 1, 32)
 	if err != nil {
