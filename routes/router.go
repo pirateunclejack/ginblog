@@ -32,6 +32,8 @@ func InitRouter() {
 		routerV1.GET("article", v1.GetArt)
 		routerV1.PUT("article/:id", v1.EditArt)
 		routerV1.DELETE("article/:id", v1.DeleteArt)
+		routerV1.GET("article/list/:cid", v1.GetCateArt)
+		routerV1.GET("article/info/:id", v1.GetArtInfo)
 
 	}
 
