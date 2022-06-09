@@ -13,9 +13,11 @@ const (
 	ERROR_TOKEN_WRONG        = 1006
 	ERROR_TOKEN_WRONG_FORMAT = 1007
 	// code = 2000... , article mode error
+	ERROR_ART_NOT_EXIST = 2001
 
 	// code = 3000... , category mode error
-	ERROR_CATENAME_USED = 2001
+	ERROR_CATENAME_USED  = 3001
+	ERROR_CATE_NOT_EXIST = 3002
 )
 
 var codeMsg = map[int]string{
@@ -29,6 +31,8 @@ var codeMsg = map[int]string{
 	ERROR_TOKEN_WRONG:        "token wrong",
 	ERROR_TOKEN_WRONG_FORMAT: "token wrong format",
 	ERROR_CATENAME_USED:      "category already exist",
+	ERROR_CATE_NOT_EXIST:     "category not exist",
+	ERROR_ART_NOT_EXIST:      "article not exist",
 }
 
 func GetErrMsg(code int) string {
