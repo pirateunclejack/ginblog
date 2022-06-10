@@ -32,6 +32,9 @@ func InitRouter() {
 		routerAuthV1.PUT("article/:id", v1.EditArt)
 		routerAuthV1.DELETE("article/:id", v1.DeleteArt)
 
+		// upload file
+		routerAuthV1.POST("upload", v1.Upload)
+
 	}
 
 	routerPubV1 := r.Group("api/v1")
