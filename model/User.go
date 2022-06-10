@@ -11,9 +11,9 @@ import (
 
 type User struct {
 	gorm.Model
-	Username string `gorm:"type:varchar(128);not null" json:"username"`
-	Password string `gorm:"type:varchar(128);not null" json:"password"`
-	Role     int    `gorm:"type:int" json:"role"`
+	Username string `gorm:"type:varchar(128);not null" json:"username" validate:"required,min=4,max=12"`
+	Password string `gorm:"type:varchar(128);not null" json:"password" validate:"required,min=6,max=20"`
+	Role     int    `gorm:"type:int;default:2" json:"role" validate:"required,gte=2"`
 }
 
 // check if user exist
