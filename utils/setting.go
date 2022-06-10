@@ -19,6 +19,11 @@ var (
 	DbName     string
 	DbSslMode  string
 	DbTimeZone string
+
+	AccessKey   string
+	SecretKey   string
+	Bucket      string
+	QiniuServer string
 )
 
 func init() {
@@ -28,6 +33,7 @@ func init() {
 	}
 	LoadServer(file)
 	LoadData(file)
+	LoadQiniu(file)
 }
 
 func LoadServer(file *ini.File) {
@@ -46,4 +52,12 @@ func LoadData(file *ini.File) {
 	DbName = file.Section("database").Key("DbName").MustString("ginblog")
 	DbSslMode = file.Section("database").Key("DbSslMode").MustString("disable")
 	DbTimeZone = file.Section("database").Key("DbTimeZone").MustString("Asia/Shanghai")
+}
+
+func LoadQiniu(file *ini.File) {
+	AccessKey = file.Section("qiniu").Key("AccessKey").MustString("")
+	SecretKey = file.Section("qiniu").Key("SecretKey").MustString("")
+	Bucket = file.Section("qiniu").Key("Bucket").MustString("")
+	QiniuServer = file.Section("qiniu").Key("QiniuServer").MustString("")
+
 }
