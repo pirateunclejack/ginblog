@@ -12,6 +12,7 @@ const (
 	ERROR_TOKEN_EXPIRED      = 1005
 	ERROR_TOKEN_WRONG        = 1006
 	ERROR_TOKEN_WRONG_FORMAT = 1007
+	ERROR_USER_NO_RIGHT      = 1008
 	// code = 2000... , article mode error
 	ERROR_ART_NOT_EXIST = 2001
 
@@ -33,6 +34,7 @@ var codeMsg = map[int]string{
 	ERROR_CATENAME_USED:      "category already exist",
 	ERROR_CATE_NOT_EXIST:     "category not exist",
 	ERROR_ART_NOT_EXIST:      "article not exist",
+	ERROR_USER_NO_RIGHT:      "user doesn't have permission",
 }
 
 func GetErrMsg(code int) string {
