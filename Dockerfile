@@ -14,7 +14,7 @@ RUN go mod download
 
 COPY . .
 
-RUN go build -o ./run .
+RUN go build -buildvcs=false -o ./run .
 
 FROM alpine:latest
 RUN apk --no-cache add ca-certificates
