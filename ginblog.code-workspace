@@ -1,0 +1,9 @@
+{
+  "folders": [
+    {
+      "name": "ginblog",
+      "path": "."
+    },
+    { "name": "admin", "path": "./web/admin" }
+  ]
+}
