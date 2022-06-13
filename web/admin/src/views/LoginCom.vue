@@ -1,7 +1,12 @@
 <template>
   <div class="container">
     <div class="loginBox">
-      <a-form-model :rules="rules" :model="formdata" class="loginForm">
+      <a-form-model
+        ref="loginFormRef"
+        :rules="rules"
+        :model="formdata"
+        class="loginForm"
+      >
         <a-form-model-item prop="username">
           <a-input v-model="formdata.username" placeholder="Username">
             <a-icon
@@ -25,8 +30,10 @@
           </a-input>
         </a-form-model-item>
         <a-form-model-item class="loginBtn">
-          <a-button type="primary" style="margin: 10px">Login</a-button>
-          <a-button type="info">Cancel</a-button>
+          <a-button type="primary" style="margin: 10px" @click="login"
+            >Login</a-button
+          >
+          <a-button type="info" @click="resetForm">Cancel</a-button>
         </a-form-model-item>
       </a-form-model>
     </div>
@@ -61,6 +68,21 @@ export default {
           }
         ]
       }
+    }
+  },
+  methods: {
+    resetForm() {
+      this.$refs.loginFormRef.resetFields()
+    },
+    login() {
+      this.$refs.loginFormRef.validate(async (valid) => {
+        if (!valid) return this.$message.error('Username or password invalid!')
+        const { data: res } = await this.$http.post('login', this.formdata)
+        console.log(res)
+        if (res.status !== 200) return this.$message.error(res.message)
+        window.sessionStorage.setItem('token', res.token)
+        this.$router.push('admin')
+      })
     }
   }
 }
