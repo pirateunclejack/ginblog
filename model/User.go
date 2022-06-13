@@ -115,7 +115,7 @@ func CheckLogin(username string, password string) int {
 	if ScryptPw(password) != user.Password {
 		return errmsg.ERROR_PASSWORD_WRONG
 	}
-	if user.Role != 0 {
+	if user.Role != 1 {
 		return errmsg.ERROR_USER_NO_RIGHT
 	}
 	return errmsg.SUCCESS
