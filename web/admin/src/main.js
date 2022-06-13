@@ -4,6 +4,7 @@ import router from './router'
 
 import './plugin/antui'
 import axios from 'axios'
+import './assets/css/style.css'
 
 axios.defaults.baseURL = 'http://malcorp.test/api/v1'
 Vue.prototype.$http = axios
