@@ -21,6 +21,7 @@
             v-model="formdata.password"
             placeholder="Password"
             type="password"
+            v-on:keyup.enter="login"
           >
             <a-icon
               slot="prefix"
