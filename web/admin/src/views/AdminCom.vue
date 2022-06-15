@@ -1,14 +1,9 @@
 <template>
   <a-layout class="container">
-    <a-layout-sider>
-      <div class="logo">
-        <span>My Logo</span>
-      </div>
-      <NavCom></NavCom>
-    </a-layout-sider>
+    <NavCom></NavCom>
     <a-layout>
       <a-layout-header class="headerBtn">
-        <a-button type="danger" @click="logout">Logout</a-button>
+        <HeaderCom></HeaderCom>
       </a-layout-header>
       <a-layout-content>
         <router-view></router-view>
@@ -23,14 +18,10 @@
 <script>
 import NavCom from '../components/admin/NavCom.vue'
 import FooterCom from '../components/admin/FooterCom.vue'
+import HeaderCom from '@/components/admin/HeaderCom.vue'
+
 export default {
-  components: { NavCom, FooterCom },
-  methods: {
-    logout() {
-      window.sessionStorage.clear('token')
-      this.$router.push('/login')
-    }
-  }
+  components: { NavCom, FooterCom, HeaderCom }
 }
 </script>
 
@@ -42,14 +33,5 @@ export default {
   display: flex;
   justify-content: right;
   align-items: center;
-}
-.logo {
-  height: 32px;
-  margin: 16px;
-  background-color: white;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-size: 17px;
 }
 </style>

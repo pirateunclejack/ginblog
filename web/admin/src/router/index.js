@@ -3,6 +3,13 @@ import VueRouter from 'vue-router'
 import LoginCom from '../views/LoginCom.vue'
 import AdminCom from '../views/AdminCom.vue'
 
+// page router components
+import IndexCom from '../components/admin/IndexCom.vue'
+import AddArt from '../components/article/AddArt.vue'
+import ArtList from '../components/article/ArtList.vue'
+import CateList from '../components/category/CateList.vue'
+import UserList from '../components/user/UserList.vue'
+
 Vue.use(VueRouter)
 
 const routes = [
@@ -17,7 +24,14 @@ const routes = [
     // route level code-splitting
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
-    component: AdminCom
+    component: AdminCom,
+    children: [
+      { path: '/index', component: IndexCom },
+      { path: '/addart', component: AddArt },
+      { path: '/artlist', component: ArtList },
+      { path: '/catelist', component: CateList },
+      { path: '/userlist', component: UserList }
+    ]
   }
 ]
 
