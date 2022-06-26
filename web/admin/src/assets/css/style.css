@@ -1,8 +1,16 @@
 html,
 body,
-#app{
-    height: 100%;
-    margin: 0;
-    padding: 0;
+#app {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
 
+.ant-card {
+  margin: 10px;
+  background: white;
+}
+
+.ant-table {
+  margin-top: 15px;
 }

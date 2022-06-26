@@ -82,7 +82,7 @@ export default {
         console.log(res)
         if (res.status !== 200) return this.$message.error(res.message)
         window.sessionStorage.setItem('token', res.token)
-        this.$router.push('admin')
+        this.$router.push('admin/index')
       })
     }
   }
