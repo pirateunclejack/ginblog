@@ -38,16 +38,9 @@ func CreateUser(data *User) int {
 
 // check user list
 func GetUsers(username string, pageSize int, pageNum int) ([]User, int64) {
+
 	var users []User
 	var total int64
-
-	// err := db.Limit(pageSize).Offset((pageNum - 1) * pageSize).Find(&users).Error
-	// offset := (pageNum - 1) * pageSize
-	// if pageNum == -1 && pageSize == -1 {
-	// 	offset = -1
-	// }
-
-	// err := db.Limit(pageSize).Offset(offset).Find(&users).Error
 
 	if username != "" {
 		db.Select("id,username,role,created_at").Where(
@@ -58,12 +51,14 @@ func GetUsers(username string, pageSize int, pageNum int) ([]User, int64) {
 		).Count(&total)
 		return users, total
 	}
-	// err := db.Limit(pageSize).Offset((pageNum - 1) * pageSize).Find(&users).Error
 	db.Select("id,username,role,created_at").Limit(pageSize).Offset((pageNum - 1) * pageSize).Find(&users)
+	db.Model(&users).Count(&total)
+
 	if err != nil {
 		return users, 0
 	}
 	return users, total
+
 }
 
 // update user

@@ -4,7 +4,13 @@
     <a-card>
       <a-row :gutter="20">
         <a-col :span="6">
-          <a-input-search placeholder="input username to search" enter-button />
+          <a-input-search
+            v-model="queryParam.username"
+            placeholder="input username to search"
+            enter-button
+            allowClear
+            @search="getUserList"
+          />
         </a-col>
         <a-col :span="4">
           <a-button type="primary">Add</a-button>
@@ -13,17 +19,20 @@
       <a-table
         rowKey="username"
         :columns="columns"
-        :pagination="paginationOption"
+        :pagination="pagination"
         :dataSource="userlist"
         bordered
+        @change="handleTableChange"
       >
         <span slot="role" slot-scope="role">{{
-          role === 1 ? 'Administrator' : 'Register'
+          role === 1 ? 'Administrator' : 'Subscriber'
         }}</span>
-        <template slot="action">
+        <template slot="action" slot-scope="text, data">
           <div class="actionSlot">
             <a-button type="primary" style="margin-right: 15px">Edit</a-button>
-            <a-button type="danger">Delete</a-button>
+            <a-button type="danger" @click="deleteUser(data.ID)"
+              >Delete</a-button
+            >
           </div>
         </template>
       </a-table>
@@ -67,26 +76,21 @@ const columns = [
 export default {
   data() {
     return {
-      paginationOption: {
-        pageSizeOptions: ['2', '5', '10'],
-        defaultCurrent: 1,
-        defaultPageSize: 5,
+      pagination: {
+        pageSizeOptions: ['2', '4', '8'],
+        pageSize: 2,
         total: 0,
         showSizeChanger: true,
-        showTotal: (total) => `Total ${total}`,
-        onChange: (current, pageSize) => {
-          this.paginationOption.defaultCurrent = current
-          this.paginationOption.defaultPageSize = pageSize
-          this.getUserList()
-        },
-        onshowSizeChange: (current, size) => {
-          this.paginationOption.defaultCurrent = current
-          this.paginationOption.defaultPageSize = size
-          this.getUserList()
-        }
+        showTotal: (total) => `Total ${total}`
       },
       userlist: [],
-      columns
+      columns,
+      queryParam: {
+        username: '',
+        pagesize: 2,
+        pagenum: 1
+      },
+      visible: false
     }
   },
   created() {
@@ -94,18 +98,48 @@ export default {
   },
   methods: {
     async getUserList() {
-      const { data: res } = await this.$http.get('users', {
+      const { data: res } = await this.$http.get('admin/users', {
         params: {
-          // username: this.queryParam.username,
-          // pagesize: this.queryParam.pagesize,
-          // pagenum: this.queryParam.pagenum
-          pagesize: this.paginationOption.defaultPageSize,
-          pagenum: this.paginationOption.defaultCurrent
+          username: this.queryParam.username,
+          pagesize: this.queryParam.pagesize,
+          pagenum: this.queryParam.pagenum
         }
       })
-      if (res.status !== 200) return this.$message.error(res.message)
+      if (res.status !== 200) {
+        return this.$message.error(res.message)
+      }
       this.userlist = res.data
-      this.paginationOption.total = res.total
+      this.pagination.total = res.total
+    },
+    handleTableChange(pagination, filters, sorter) {
+      const pager = { ...this.pagination }
+      pager.current = pagination.current
+      pager.pageSize = pagination.pageSize
+      this.queryParam.pagesize = pagination.pageSize
+      this.queryParam.pagenum = pagination.current
+
+      if (pagination.pageSize !== this.pagination.pageSize) {
+        this.queryParam.pagenum = 1
+        pager.current = 1
+      }
+      this.pagination = pager
+      this.getUserList()
+    },
+    deleteUser(id) {
+      this.$confirm({
+        title: 'Do you want to delete this user?',
+        content:
+          'Are you sure you want to delete this user? Once it is deleted , it will be impossible to recover it!',
+        onOk: async () => {
+          const { data: res } = await this.$http.delete(`user/${id}`)
+          if (res.status !== 200) return this.$message.error(res.message)
+          this.$message.success('Delete success')
+          this.getUserList()
+        },
+        onCancel: () => {
+          this.$message.info('Cancel delete')
+        }
+      })
     }
   }
 }
