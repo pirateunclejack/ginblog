@@ -26,11 +26,11 @@ const routes = [
     // which is lazy-loaded when the route is visited.
     component: AdminCom,
     children: [
-      { path: '/index', component: IndexCom },
-      { path: '/addart', component: AddArt },
-      { path: '/artlist', component: ArtList },
-      { path: '/catelist', component: CateList },
-      { path: '/userlist', component: UserList }
+      { path: 'index', component: IndexCom },
+      { path: 'addart', component: AddArt },
+      { path: 'artlist', component: ArtList },
+      { path: 'catelist', component: CateList },
+      { path: 'userlist', component: UserList }
     ]
   }
 ]
