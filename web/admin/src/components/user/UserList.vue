@@ -13,7 +13,7 @@
           />
         </a-col>
         <a-col :span="4">
-          <a-button type="primary">Add</a-button>
+          <a-button type="primary" @click="addUserVisible = true">Add</a-button>
         </a-col>
       </a-row>
       <a-table
@@ -29,7 +29,12 @@
         }}</span>
         <template slot="action" slot-scope="text, data">
           <div class="actionSlot">
-            <a-button type="primary" style="margin-right: 15px">Edit</a-button>
+            <a-button
+              type="primary"
+              style="margin-right: 15px"
+              @click="editUser(data.ID)"
+              >Edit</a-button
+            >
             <a-button type="danger" @click="deleteUser(data.ID)"
               >Delete</a-button
             >
@@ -37,6 +42,54 @@
         </template>
       </a-table>
     </a-card>
+    <!-- Add user -->
+    <a-modal
+      closable
+      title="Add user"
+      :visible="addUserVisible"
+      width="60%"
+      @ok="addUserOk"
+      @cancel="addUserCancel"
+      destroyOnClose
+    >
+      <a-form-model :model="newUser" :rules="addUserRules" ref="addUserRef">
+        <a-form-model-item label="username" prop="username">
+          <a-input v-model="newUser.username"></a-input>
+        </a-form-model-item>
+        <a-form-model-item has-feedback label="password" prop="password">
+          <a-input-password v-model="newUser.password"></a-input-password>
+        </a-form-model-item>
+        <a-form-model-item
+          has-feedback
+          label="confirm password"
+          prop="checkpass"
+        >
+          <a-input-password v-model="newUser.checkpass"></a-input-password>
+        </a-form-model-item>
+      </a-form-model>
+    </a-modal>
+    <!-- Edit user -->
+    <a-modal
+      closable
+      title="Edit user"
+      :visible="editUserVisible"
+      width="60%"
+      @ok="editUserOk"
+      @cancel="editUserCancel"
+    >
+      <a-form-model :model="userInfo" :rules="editUserRules" ref="editUserRef">
+        <a-form-model-item label="Username" prop="username"
+          ><a-input v-model="userInfo.username"></a-input
+        ></a-form-model-item>
+        <a-form-model-item label="If is an administrator">
+          <a-switch
+            :checked="IsAdmin"
+            checked-children="Yes"
+            un-checked-children="No"
+            @change="adminChange"
+        /></a-form-model-item>
+      </a-form-model>
+    </a-modal>
   </div>
 </template>
 
@@ -90,11 +143,149 @@ export default {
         pagesize: 2,
         pagenum: 1
       },
-      visible: false
+      userInfo: {
+        id: 0,
+        username: '',
+        password: '',
+        checkpass: '',
+        role: 2
+      },
+      newUser: {
+        username: '',
+        password: '',
+        role: 2,
+        checkPass: ''
+      },
+      visible: false,
+      addUserRules: {
+        username: [
+          {
+            validator: (rule, value, callback) => {
+              if (this.newUser.username === '') {
+                callback(new Error('Please input username'))
+              }
+              if (
+                [...this.newUser.username].length < 4 ||
+                [...this.newUser.username].length > 12
+              ) {
+                callback(
+                  new Error('The length of username should >=4 and <=12')
+                )
+              } else {
+                callback()
+              }
+            },
+            trigger: 'blur'
+          }
+        ],
+        password: [
+          {
+            validator: (rule, value, callback) => {
+              if (this.newUser.password === '') {
+                callback(new Error('Please input password'))
+              }
+              if (
+                [...this.newUser.password].length < 6 ||
+                [...this.newUser.password].length > 20
+              ) {
+                callback(
+                  new Error('The length of password should >=6 and <=20')
+                )
+              } else {
+                callback()
+              }
+            },
+            trigger: 'blur'
+          }
+        ],
+        checkpass: [
+          {
+            validator: (rule, value, callback) => {
+              if (this.newUser.checkpass === '') {
+                callback(new Error('Please input password'))
+              }
+              if (this.newUser.password !== this.newUser.checkpass) {
+                callback(new Error('Password mismatch, please input again'))
+              } else {
+                callback()
+              }
+            },
+            trigger: 'blur'
+          }
+        ]
+      },
+      editUserRules: {
+        username: [
+          {
+            validator: (rule, value, callback) => {
+              if (this.userInfo.username === '') {
+                callback(new Error('Please input username'))
+              }
+              if (
+                [...this.userInfo.username].length < 4 ||
+                [...this.userInfo.username].length > 12
+              ) {
+                callback(
+                  new Error('The length of username should >=4 and <=12')
+                )
+              } else {
+                callback()
+              }
+            },
+            trigger: 'blur'
+          }
+        ],
+        password: [
+          {
+            validator: (rule, value, callback) => {
+              if (this.userInfo.password === '') {
+                callback(new Error('Please input password'))
+              }
+              if (
+                [...this.userInfo.password].length < 6 ||
+                [...this.userInfo.password].length > 20
+              ) {
+                callback(
+                  new Error('The length of password should >=6 and <=20')
+                )
+              } else {
+                callback()
+              }
+            },
+            trigger: 'blur'
+          }
+        ],
+        checkpass: [
+          {
+            validator: (rule, value, callback) => {
+              if (this.userInfo.checkpass === '') {
+                callback(new Error('Please input password'))
+              }
+              if (this.userInfo.password !== this.userInfo.checkpass) {
+                callback(new Error('Password mismatch, please input again'))
+              } else {
+                callback()
+              }
+            },
+            trigger: 'blur'
+          }
+        ]
+      },
+      addUserVisible: false,
+      editUserVisible: false
     }
   },
   created() {
     this.getUserList()
+  },
+  computed: {
+    IsAdmin: function () {
+      if (this.userInfo.role === 1) {
+        return true
+      } else {
+        return false
+      }
+    }
   },
   methods: {
     async getUserList() {
@@ -140,6 +331,69 @@ export default {
           this.$message.info('Cancel delete')
         }
       })
+    },
+    // Add user
+    addUserOk() {
+      this.$refs.addUserRef.validate(async (valid) => {
+        if (!valid) {
+          return this.$message.error('Invalid parameters, please input again')
+        }
+        const { data: res } = await this.$http.post('user/add', {
+          username: this.newUser.username,
+          password: this.newUser.password,
+          role: this.newUser.role
+        })
+        if (res.status !== 200) return this.$message.error(res.message)
+        this.$refs.addUserRef.resetFields()
+        this.addUserVisible = false
+        this.$message.success('Add user success')
+        this.getUserList()
+      })
+    },
+    addUserCancel() {
+      this.$refs.addUserRef.resetFields()
+      this.addUserVisible = false
+      this.$message.info('Add user canceled')
+    },
+    adminChange(checked) {
+      if (checked) {
+        this.userInfo.role = 1
+      } else {
+        this.userInfo.role = 2
+      }
+    },
+    // Edit user
+    async editUser(id) {
+      this.editUserVisible = true
+      const { data: res } = await this.$http.get(`user/${id}`)
+      this.userInfo = res.data
+      this.userInfo.id = id
+    },
+    editUserOk() {
+      this.$refs.editUserRef.validate(async (valid) => {
+        if (!valid) {
+          return this.$message.error('Invalid parameters , please input again')
+        }
+        const { data: res } = await this.$http.put(`user/${this.userInfo.id}`, {
+          username: this.userInfo.username,
+          role: this.userInfo.role
+        })
+        if (res.status !== 200) {
+          console.log(res)
+          return this.$message.error(res.message)
+        }
+        console.log(this.userInfo.role)
+        console.log(this.userInfo.username)
+        console.log(res)
+        this.editUserVisible = false
+        this.$message.success('Edit user success')
+        this.getUserList()
+      })
+    },
+    editUserCancel() {
+      this.$refs.editUserRef.resetFields()
+      this.editUserVisible = false
+      this.$message.info('Edit canceled')
     }
   }
 }
