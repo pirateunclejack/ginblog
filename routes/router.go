@@ -22,6 +22,7 @@ func InitRouter() {
 		routerAuthV1.PUT("user/:id", v1.EditUser)
 		routerAuthV1.DELETE("user/:id", v1.DeleteUser)
 		routerAuthV1.GET("admin/users", v1.GetUsers)
+		routerAuthV1.GET("user/:id", v1.GetUserInfo)
 
 		// category mode router
 

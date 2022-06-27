@@ -45,6 +45,17 @@ func AddUser(c *gin.Context) {
 }
 
 // search single user
+func GetUserInfo (c *gin.Context) {
+	id, _ := strconv.Atoi(c.Param("id"))
+	data, code := model.GetUser(id)
+
+	c.JSON(http.StatusOK, gin.H{
+		"status": code,
+		"data": data,
+		"total": 1,
+		"message": errmsg.GetErrMsg(code),
+	})
+}
 
 // search user list
 func GetUsers(c *gin.Context) {
@@ -77,13 +88,11 @@ func EditUser(c *gin.Context) {
 	var data model.User
 	id, _ := strconv.Atoi(c.Param("id"))
 	c.ShouldBindJSON(&data)
-	code = model.CheckUser(data.Username)
+	code = model.CheckUpUser(id, data.Username)
 	if code == errmsg.SUCCESS {
 		model.EditUser(id, &data)
 	}
-	if code == errmsg.ERROR_USERNAME_USED {
-		c.Abort()
-	}
+
 	c.JSON(http.StatusOK, gin.H{
 		"status":  code,
 		"message": errmsg.GetErrMsg(code),
