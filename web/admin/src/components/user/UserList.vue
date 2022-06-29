@@ -31,12 +31,20 @@
           <div class="actionSlot">
             <a-button
               type="primary"
+              icon="edit"
               style="margin-right: 15px"
               @click="editUser(data.ID)"
               >Edit</a-button
             >
-            <a-button type="danger" @click="deleteUser(data.ID)"
+            <a-button
+              type="danger"
+              icon="delete"
+              style="margin-right: 15px"
+              @click="deleteUser(data.ID)"
               >Delete</a-button
+            >
+            <a-button type="info" icon="info" @click="ChangePassword(data.ID)"
+              >Change password</a-button
             >
           </div>
         </template>
@@ -88,6 +96,37 @@
             un-checked-children="No"
             @change="adminChange"
         /></a-form-model-item>
+      </a-form-model>
+    </a-modal>
+    <!-- Change password -->
+    <a-modal
+      closable
+      title="Change password"
+      :visible="changePasswordVisible"
+      width="60%"
+      @ok="changePasswordOk"
+      @cancel="changePasswordCancel"
+      destroyOnClose
+    >
+      <a-form-model
+        :model="changePassword"
+        :rules="changePasswordRules"
+        ref="changePasswordRef"
+      >
+        <a-form-model-item has-feedback label="Password" prop="password">
+          <a-input-password
+            v-model="changePassword.password"
+          ></a-input-password>
+        </a-form-model-item>
+        <a-form-model-item
+          has-feedback
+          label="Confirm password"
+          prop="checkpass"
+        >
+          <a-input-password
+            v-model="changePassword.checkpass"
+          ></a-input-password>
+        </a-form-model-item>
       </a-form-model>
     </a-modal>
   </div>
@@ -147,13 +186,18 @@ export default {
         id: 0,
         username: '',
         password: '',
-        checkpass: '',
+        checkPass: '',
         role: 2
       },
       newUser: {
         username: '',
         password: '',
         role: 2,
+        checkPass: ''
+      },
+      changePassword: {
+        id: 0,
+        password: '',
         checkPass: ''
       },
       visible: false,
@@ -271,8 +315,48 @@ export default {
           }
         ]
       },
+      changePasswordRules: {
+        password: [
+          {
+            validator: (rule, value, callback) => {
+              if (this.changePassword.password === '') {
+                callback(new Error('Please input password'))
+              }
+              if (
+                [...this.changePassword.password].length < 6 ||
+                [...this.changePassword.password].length > 20
+              ) {
+                callback(
+                  new Error('The length of password should >=6 and <=20')
+                )
+              } else {
+                callback()
+              }
+            },
+            trigger: 'blur'
+          }
+        ],
+        checkpass: [
+          {
+            validator: (rule, value, callback) => {
+              if (this.changePassword.checkpass === '') {
+                callback(new Error('Please input password'))
+              }
+              if (
+                this.changePassword.password !== this.changePassword.checkpass
+              ) {
+                callback(new Error('Password mismatch, please input again'))
+              } else {
+                callback()
+              }
+            },
+            trigger: 'blur'
+          }
+        ]
+      },
       addUserVisible: false,
-      editUserVisible: false
+      editUserVisible: false,
+      changePasswordVisible: false
     }
   },
   created() {
@@ -394,6 +478,34 @@ export default {
       this.$refs.editUserRef.resetFields()
       this.editUserVisible = false
       this.$message.info('Edit canceled')
+    },
+    // Change password
+    async ChangePassword(id) {
+      this.changePasswordVisible = true
+      // const { data: res } = await this.$http.get(`user/${id}`)
+      this.changePassword.id = id
+    },
+    changePasswordOk() {
+      this.$refs.changePasswordRef.validate(async (valid) => {
+        if (!valid) {
+          return this.$message.error('Invalid parameters, please input again')
+        }
+        const { data: res } = await this.$http.put(
+          `admin/changepw/${this.changePassword.id}`,
+          {
+            password: this.changePassword.password
+          }
+        )
+        if (res.status !== 200) return this.$message.error(res.message)
+        this.changePasswordVisible = false
+        this.$message.success('Change password success')
+        this.getUserList()
+      })
+    },
+    changePasswordCancel() {
+      this.$refs.changePasswordRef.resetFields()
+      this.changePasswordVisible = false
+      this.$message.info('Change password canceled')
     }
   }
 }

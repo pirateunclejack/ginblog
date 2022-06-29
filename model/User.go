@@ -97,6 +97,15 @@ func EditUser(id int, data *User) int {
 	return errmsg.SUCCESS
 }
 
+// change password
+func ChangePassword(id int, data *User) int {
+	err = db.Select("password").Where("id = ?", id).Updates(&data).Error
+	if err != nil {
+		return errmsg.ERROR
+	}
+	return errmsg.SUCCESS
+}
+
 // delete user
 func DeleteUser(id int) int {
 	var user User

@@ -99,6 +99,20 @@ func EditUser(c *gin.Context) {
 	})
 }
 
+// change password
+func ChangeUserPassword(c *gin.Context) {
+	var data model.User
+	id, _ := strconv.Atoi(c.Param("id"))
+	_ = c.ShouldBindJSON(&data)
+
+	code := model.ChangePassword(id, &data)
+
+	c.JSON(http.StatusOK, gin.H{
+		"status": code,
+		"message": errmsg.GetErrMsg(code),
+	})
+}
+
 // delete user
 func DeleteUser(c *gin.Context) {
 	id, _ := strconv.Atoi(c.Param("id"))
