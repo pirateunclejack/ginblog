@@ -8,13 +8,15 @@ import (
 )
 
 type Article struct {
+	Category Category `gorm:"foreignKey:Cid;regerences:ID"`
 	gorm.Model
-	Category Category `gorm:"foreignKey:Cid;references:ID"`
 	Title    string   `gorm:"type:varchar(128);not null" json:"title"`
 	Cid      int      `gorm:"type:int;not null" json:"cid"`
-	Desc     string   `gorm:"type:varchar(1024)" json:"desc"`
+	Describe     string   `gorm:"type:varchar(1024)" json:"describe"`
 	Content  string   `gorm:"type:text" json:"content"`
 	Img      string   `gorm:"type:varchar(128)" json:"img"`
+	CommentCount int    `gorm:"type:int;not null;default:0" json:"comment_count"`
+	ReadCount    int    `gorm:"type:int;not null;default:0" json:"read_count"`
 }
 
 // CreateArticle
@@ -26,16 +28,16 @@ func CreateArt(data *Article) int {
 	return errmsg.SUCCESS
 }
 
-// search all articles with one category
+// search all article with one category
 func GetCateArt(cid int, pageSize int, pageNum int) ([]Article, int, int64) {
 	// var art Article
 	var cateArtList []Article
 	var total int64
-	// db.Model(&art).Joins("inner join categories on articles.cid = ?", cid).Limit(pageSize).Offset((pageNum - 1) * pageSize).Scan(&cateArtList)
+	// db.Model(&art).Joins("inner join category on article.cid = ?", cid).Limit(pageSize).Offset((pageNum - 1) * pageSize).Scan(&cateArtList)
 	// db.Model(&art).Where("cid = ?", cid).Preload("Category").Limit(pageSize).Offset((pageNum - 1) * pageSize).Scan(&cateArtList)
-	// db.Model(&art).Preload("Category").Select("*").Where("cid = ?", id).Limit(pageSize).Offset((pageNum - 1) * pageSize).Joins("left join categories on articles.cid = categories.id").Scan(&cateArtList)
+	// db.Model(&art).Preload("Category").Select("*").Where("cid = ?", id).Limit(pageSize).Offset((pageNum - 1) * pageSize).Joins("left join category on article.cid = category.id").Scan(&cateArtList)
 
-	// err := db.Preload("Categories.cid").Limit(pageSize).Offset((pageNum-1)*pageSize).Find(&cateArtList, "cid = ?", id).Error
+	// err := db.Preload("category.cid").Limit(pageSize).Offset((pageNum-1)*pageSize).Find(&cateArtList, "cid = ?", id).Error
 	// db.Model(&cateArtList).Count(&total)
 
 	err = db.Preload("Category").Limit(pageSize).Offset((pageNum-1)*pageSize).Where(
@@ -61,23 +63,22 @@ func GetArtInfo(id int) (Article, int) {
 
 // GetArticle list
 func GetArt(pageSize int, pageNum int) ([]Article, int, int64) {
-	var art Article
-	var artList []Article
+	var articleList []Article
 	var err error
 	var total int64
-
-	// err := db.Preload("Category").Limit(pageSize).Offset((pageNum - 1) * pageNum).Error
-	// err := db.Find(&artList).Limit(pageSize).Offset((pageNum - 1) * pageNum).Error
-	// db.Model(&artList).Count(&total)
-	// err = db.Select("articles.id, title, img, created_at, updated_at").Limit(pageSize).Offset((pageNum - 1) * pageSize).Joins("categories").Find(&artList).Error
-	// err = db.Model(&art).Joins("Category").Limit(pageSize).Offset((pageNum - 1) * pageSize).Scan(&artList).Error
-	err = db.Model(&art).Limit(pageSize).Offset((pageNum - 1) * pageSize).Joins("Category").Find(&artList).Error
-	log.Println("artList: ", artList)
-	db.Model(&artList).Count(&total)
+	err = db.Preload("Category").
+		Select("article.id, title, img, cid, created_at, updated_at, describe, comment_count, read_count, category.name").
+		Limit(pageSize).Offset((pageNum - 1) * pageSize).
+		Order("Created_At DESC").
+		Joins("LEFT JOIN category ON article.cid = category.id").
+		Find(&articleList).Error
+	// count
+	db.Model(&articleList).Count(&total)
+	log.Println(articleList)
 	if err != nil {
 		return nil, errmsg.ERROR, 0
 	}
-	return artList, errmsg.SUCCESS, total
+	return articleList, errmsg.SUCCESS, total
 }
 
 // EditArticle
@@ -86,7 +87,7 @@ func EditArt(id int, data *Article) int {
 	var maps = make(map[string]interface{})
 	maps["title"] = data.Title
 	maps["cid"] = data.Cid
-	maps["desc"] = data.Desc
+	maps["describe"] = data.Describe
 	maps["content"] = data.Content
 	maps["img"] = data.Img
 
@@ -105,4 +106,26 @@ func DeleteArt(id int) int {
 		return errmsg.ERROR
 	}
 	return errmsg.SUCCESS
+}
+
+// Search article via title
+func SearchArticle(title string, pageSize int, pageNum int) ([]Article, int, int64) {
+	var articleList []Article
+	var err error
+	var total int64
+	err = db.Preload("Category").
+		Select("article.id, title, img, cid, created_at, updated_at, describe, comment_count, read_count, category.name").
+		Order("Created_At DESC").Joins("LEFT JOIN category ON article.cid = category.id").
+		Where("title LIKE ?", title+"%",).
+		Limit(pageSize).Offset((pageNum - 1) * pageSize).Find(&articleList).Error
+	// Count
+	db.Model(&articleList).Where("title LIKE ?",
+		title+"%",
+	).Count(&total)
+	log.Println(articleList)
+
+	if err != nil {
+		return nil, errmsg.ERROR, 0
+	}
+	return articleList, errmsg.SUCCESS, total
 }

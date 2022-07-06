@@ -36,8 +36,6 @@ func UploadFile(file multipart.File, fileSize int64) (string, int) {
 	ret := storage.PutRet{}
 
 	err := formUploader.PutWithoutKey(context.Background(), &ret, upToken, file, fileSize, &putExtra)
-	// err := formUploader.PutFileWithoutKey (context.Background(), &ret, upToken, ret.Key, file, fileSize, &putExtra)
-	// err := formUploader.Put(context.Background(), &ret, upToken, ret.Key, file, fileSize, &putExtra)
 	if err != nil {
 		return "", errmsg.ERROR
 	}
