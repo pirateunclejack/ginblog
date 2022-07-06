@@ -46,6 +46,7 @@ func InitRouter() {
 	{
 		routerPubV1.POST("user/add", v1.AddUser)
 		routerPubV1.GET("category", v1.GetCate)
+		routerPubV1.GET("category/:id", v1.GetCateInfo)
 		routerPubV1.GET("article", v1.GetArt)
 		routerPubV1.GET("article/list/:cid", v1.GetCateArt)
 		routerPubV1.GET("article/info/:id", v1.GetArtInfo)

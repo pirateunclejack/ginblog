@@ -463,12 +463,8 @@ export default {
           role: this.userInfo.role
         })
         if (res.status !== 200) {
-          console.log(res)
           return this.$message.error(res.message)
         }
-        console.log(this.userInfo.role)
-        console.log(this.userInfo.username)
-        console.log(res)
         this.editUserVisible = false
         this.$message.success('Edit user success')
         this.getUserList()

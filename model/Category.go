@@ -28,6 +28,13 @@ func CreateCate(data *Category) int {
 	return errmsg.SUCCESS
 }
 
+// Search information of single category
+func GetCateInfo(id int)(Category, int) {
+	var cate Category
+	db.Where("id = ?", id).First(&cate)
+	return cate, errmsg.SUCCESS
+}
+
 // GetCategory list
 func GetCate(name string, pageSize int, pageNum int) ([]Category, int64) {
 	var cate []Category

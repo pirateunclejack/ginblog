@@ -6,6 +6,7 @@ import (
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
+	"gorm.io/gorm/schema"
 )
 
 var db *gorm.DB
@@ -23,7 +24,10 @@ func InitDb() {
 		utils.DbTimeZone,
 	)
 
-	db, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
+	db, err = gorm.Open(postgres.Open(dsn), &gorm.Config{NamingStrategy: schema.NamingStrategy{
+			SingularTable: true,
+		},
+	})
 
 	if err != nil {
 		fmt.Println("Database connect failed with error: ", err)
@@ -32,7 +36,7 @@ func InitDb() {
 	// disalbe gingulartable
 	// db.SingularTable(true)
 
-	db.AutoMigrate(&User{}, &Article{}, &Category{})
+	db.AutoMigrate(&User{},  &Category{}, &Article{})
 
 	sqldb, err := db.DB()
 

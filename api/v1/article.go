@@ -77,13 +77,13 @@ func GetArt(c *gin.Context) {
 		})
 		return
 	}
-	// data, code, total := model.SearchArt(title, pageSize, pageNum)
-	// c.JSON(http.StatusOK, gin.H{
-	// 	"status":  code,
-	// 	"data":    data,
-	// 	"total":   total,
-	// 	"message": errmsg.GetErrMsg(code),
-	// })
+	data, code, total := model.SearchArticle(title,pageSize,pageNum)
+	c.JSON(http.StatusOK, gin.H{
+		"status":  code,
+		"data":    data,
+		"total":   total,
+		"message": errmsg.GetErrMsg(code),
+	})
 }
 
 // EditArticle
@@ -100,9 +100,9 @@ func EditArt(c *gin.Context) {
 
 // DeleteArticle
 func DeleteArt(c *gin.Context) {
-	cid, _ := strconv.Atoi(c.Param("cid"))
+	id, _ := strconv.Atoi(c.Param("id"))
 
-	code := model.DeleteArt(cid)
+	code := model.DeleteArt(id)
 
 	c.JSON(http.StatusOK, gin.H{
 		"status":  code,
