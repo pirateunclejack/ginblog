@@ -15,7 +15,8 @@ import {
   Pagination,
   ConfigProvider,
   Select,
-  Switch
+  Switch,
+  Upload
 } from 'ant-design-vue'
 
 message.config({
@@ -41,3 +42,4 @@ Vue.use(Pagination)
 Vue.use(ConfigProvider)
 Vue.use(Select)
 Vue.use(Switch)
+Vue.use(Upload)
