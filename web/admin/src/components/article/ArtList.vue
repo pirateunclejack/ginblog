@@ -13,7 +13,7 @@
           />
         </a-col>
         <a-col :span="4">
-          <a-button type="primary" @click="addArtVisible = true">Add</a-button>
+          <a-button type="primary" @click="$router.push('/admin/addart')">Add</a-button>
         </a-col>
         <a-col :span="4">
           <a-select
@@ -48,7 +48,7 @@
               type="primary"
               icon="edit"
               style="margin-right: 15px"
-              @click="editArt(data.ID)"
+              @click="$router.push(`addart/${data.ID}`)"
               >Edit</a-button
             >
             <a-button
@@ -170,7 +170,6 @@ export default {
         return this.$message.error(res.message)
       }
       this.Artlist = res.data
-      console.log(res)
       this.pagination.total = res.total
     },
     // Get Category list

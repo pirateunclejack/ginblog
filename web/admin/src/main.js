@@ -3,6 +3,7 @@ import App from './App.vue'
 import router from './router'
 
 import './plugin/antui'
+import './plugin/http'
 import axios from 'axios'
 import './assets/css/style.css'
 
