@@ -1,4 +1,4 @@
-version: '3.8'
+version: "3.8"
 services:
   reverse-proxy:
     # The official v2 Traefik docker image
@@ -19,14 +19,14 @@ services:
 
   postgres:
     image: postgres:alpine
-    restart: always
+    restart: never
     environment:
       - POSTGRES_USER=ginblog
       - POSTGRES_PASSWORD=admin123
       - POSTGRES_DB=ginblog
     ports:
-      - '5432:5432'
-    volumes: 
+      - "5432:5432"
+    volumes:
       - postgres-db:/var/lib/postgresql/data
 
   ginblog:
@@ -43,7 +43,7 @@ services:
       - .:/go/src/app
     depends_on:
       - postgres
-    restart: on-failure
+    restart: never
     command: reflex -r '\.go$$' -s -- sh -c 'sleep 3 && go run ./'
 
 volumes:

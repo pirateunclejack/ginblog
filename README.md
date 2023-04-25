@@ -1,6 +1,6 @@
 # ginblog
 
-This is a go project practice whice follows this lesson: [golang ginblog](https://www.bilibili.com/video/BV1AA411v7e6/?spm_id_from=333.788&vd_source=98c7ca79066b6ac78d5ffc8b9d12e8a3)
+This is a go project practice which follows this lesson: [golang ginblog](https://www.bilibili.com/video/BV1AA411v7e6/?spm_id_from=333.788&vd_source=98c7ca79066b6ac78d5ffc8b9d12e8a3)
 
 I gave up to follow this lesson and end this repository. Here is the code before [lesson frontend-2.11](https://www.bilibili.com/video/BV1Uz4y1f76J?vd_source=98c7ca79066b6ac78d5ffc8b9d12e8a3)
 If you want to see all code for this project, please look at here: [gitee-ginblog](https://gitee.com/wejectchan/ginblog/tree/master)
